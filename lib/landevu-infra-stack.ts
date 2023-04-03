@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { Construct } from 'constructs';
 
 export class LandevuInfraStack extends cdk.Stack {
@@ -16,6 +17,16 @@ export class LandevuInfraStack extends cdk.Stack {
           subnetType: ec2.SubnetType.PUBLIC
         }
       ]
+    })
+    const securityGroupAlb = new ec2.SecurityGroup(this, "LandevuAlbSg", {
+      vpc: vpc,
+      securityGroupName: "st-landevu-alb-sg"
+    })
+    const alb = new elbv2.ApplicationLoadBalancer(this, "LandevuAlb", {
+      vpc: vpc,
+      securityGroup: securityGroupAlb,
+      internetFacing: true,
+      loadBalancerName: "st-landevu-alb"
     })
   }
 }
