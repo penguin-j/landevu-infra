@@ -10,7 +10,7 @@ export class LandevuInfraStack extends cdk.Stack {
       vpcName: "st-landevu-vpc",
       cidr: "10.0.0.0/16",
       natGateways: 0,
-      maxAzs: 1,
+      maxAzs: 2,
       subnetConfiguration: [
         {
           name: "st-landevu-public-subnet",
