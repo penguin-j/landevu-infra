@@ -26,11 +26,22 @@ export class LandevuInfraStack extends cdk.Stack {
       securityGroupName: "st-landevu-alb-sg"
     })
     // ALB
-    const alb = new elbv2.ApplicationLoadBalancer(this, "LandevuAlb", {
+    const landevuAlb = new elbv2.ApplicationLoadBalancer(this, "LandevuAlb", {
       vpc: landevuVpc,
       securityGroup: landevuAlbSecurityGroup,
       internetFacing: true,
       loadBalancerName: "st-landevu-alb"
+    })
+    const landevuListener = landevuAlb.addListener("LandevuListener", {
+      port:80,
+      open: true
+    })
+    const landevuTargetGroup = new elbv2.ApplicationTargetGroup(this, "LandevuTargetGroup", {
+      vpc: landevuVpc,
+      port: 80,
+      protocol: elbv2.ApplicationProtocol.HTTP,
+      targetType: elbv2.TargetType.IP,
+      targetGroupName: "st-landevu-target-group"
     })
   }
 }
