@@ -9,7 +9,7 @@ export class LandevuInfraStack extends cdk.Stack {
     // VPC
     const landevuVpc = new ec2.Vpc(this, "LandevuVpc", {
       vpcName: "st-landevu-vpc",
-      cidr: "10.0.0.0/16",
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       natGateways: 0,
       maxAzs: 2,
       subnetConfiguration: [
