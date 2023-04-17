@@ -43,5 +43,8 @@ export class LandevuInfraStack extends cdk.Stack {
       targetType: elbv2.TargetType.IP,
       targetGroupName: "st-landevu-target-group"
     })
+    landevuListener.addTargetGroups("LandevuTargetGroup", {
+      targetGroups: [landevuTargetGroup]
+    })
   }
 }
