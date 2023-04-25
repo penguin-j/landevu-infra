@@ -1,6 +1,8 @@
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2"
+import * as ecr from "aws-cdk-lib/aws-ecr"
+import * as ecs from "aws-cdk-lib/aws-ecs"
 import { Construct } from "constructs";
 
 export class LandevuInfraStack extends cdk.Stack {
@@ -25,6 +27,7 @@ export class LandevuInfraStack extends cdk.Stack {
       vpc: landevuVpc,
       securityGroupName: "st-landevu-alb-sg"
     })
+    landevuAlbSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80))
     // ALB
     const landevuAlb = new elbv2.ApplicationLoadBalancer(this, "LandevuAlb", {
       vpc: landevuVpc,
