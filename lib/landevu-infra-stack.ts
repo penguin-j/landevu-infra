@@ -49,5 +49,52 @@ export class LandevuInfraStack extends cdk.Stack {
     landevuListener.addTargetGroups("LandevuTargetGroup", {
       targetGroups: [landevuTargetGroup]
     })
+
+    // ECR
+    const landevuEcrRepository = new ecr.Repository(this, "LandevuContainerRegistry", {
+      repositoryName: "landevu-api/st",
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    })
+
+    // ECS cluster
+    const landevuCluster = new ecs.Cluster(this, "LandevuCluster", {
+      vpc: landevuVpc,
+      clusterName: "st-landevu-cluster"
+    })
+
+    // ECS task definition
+    const landevuTaskDefinition = new ecs.FargateTaskDefinition(this, "LandevuTaskDefinition", {
+    })
+
+    const landevuContainer = landevuTaskDefinition.addContainer("LandevuContainer", {
+      image:ecs.ContainerImage.fromRegistry(landevuEcrRepository.repositoryName),
+      memoryLimitMiB: 256,
+      cpu: 256
+    })
+
+    landevuContainer.addPortMappings({
+      hostPort: 80,
+      containerPort: 80,
+      protocol: ecs.Protocol.TCP
+    })
+
+    // Security Group for App
+    const landevuAppSecurityGroup = new ec2.SecurityGroup(this, "LandevuAppSg", {
+      vpc: landevuVpc,
+      securityGroupName: "st-landevu-app-sg"
+    })
+    landevuAppSecurityGroup.addIngressRule(landevuAlbSecurityGroup, ec2.Port.tcp(80))
+    
+    // ECS Fargate service
+    const landevuFargateService = new ecs.FargateService(this, "LandevuFargateService", {
+      serviceName: "st-landevu-service",
+      cluster: landevuCluster,
+      taskDefinition: landevuTaskDefinition,
+      vpcSubnets: landevuVpc.selectSubnets( { subnetType: ec2.SubnetType.PUBLIC }),
+      securityGroups: [landevuAppSecurityGroup],
+      desiredCount: 1,
+      assignPublicIp: true
+    })
+    landevuFargateService.attachToApplicationTargetGroup(landevuTargetGroup)
   }
 }
