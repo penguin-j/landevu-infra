@@ -51,10 +51,7 @@ export class LandevuInfraStack extends cdk.Stack {
     })
 
     // ECR
-    const landevuEcrRepository = new ecr.Repository(this, "LandevuContainerRegistry", {
-      repositoryName: "landevu-api/st",
-      removalPolicy: cdk.RemovalPolicy.DESTROY
-    })
+    const ECR_REPOSITORY_NAME = "landevu-api/st"
 
     // ECS cluster
     const landevuCluster = new ecs.Cluster(this, "LandevuCluster", {
@@ -67,7 +64,7 @@ export class LandevuInfraStack extends cdk.Stack {
     })
 
     const landevuContainer = landevuTaskDefinition.addContainer("LandevuContainer", {
-      image:ecs.ContainerImage.fromRegistry(landevuEcrRepository.repositoryName),
+      image:ecs.ContainerImage.fromEcrRepository(ecr.Repository.fromRepositoryName(this, "fromRepositoryName", ECR_REPOSITORY_NAME), "latest"),
       memoryLimitMiB: 256,
       cpu: 256
     })
