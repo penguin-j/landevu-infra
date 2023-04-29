@@ -81,17 +81,5 @@ export class LandevuInfraStack extends cdk.Stack {
       securityGroupName: "st-landevu-app-sg"
     })
     landevuAppSecurityGroup.addIngressRule(landevuAlbSecurityGroup, ec2.Port.tcp(80))
-    
-    // ECS Fargate service
-    const landevuFargateService = new ecs.FargateService(this, "LandevuFargateService", {
-      serviceName: "st-landevu-service",
-      cluster: landevuCluster,
-      taskDefinition: landevuTaskDefinition,
-      vpcSubnets: landevuVpc.selectSubnets( { subnetType: ec2.SubnetType.PUBLIC }),
-      securityGroups: [landevuAppSecurityGroup],
-      desiredCount: 1,
-      assignPublicIp: true
-    })
-    landevuFargateService.attachToApplicationTargetGroup(landevuTargetGroup)
   }
 }
