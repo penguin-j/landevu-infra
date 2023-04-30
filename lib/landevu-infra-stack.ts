@@ -46,6 +46,9 @@ export class LandevuInfraStack extends cdk.Stack {
       targetType: elbv2.TargetType.IP,
       targetGroupName: "st-landevu-target-group"
     })
+    landevuTargetGroup.configureHealthCheck({
+      path: "/v1/healthcheck"
+    })
     landevuListener.addTargetGroups("LandevuTargetGroup", {
       targetGroups: [landevuTargetGroup]
     })
