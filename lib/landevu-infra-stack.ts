@@ -41,7 +41,7 @@ export class LandevuInfraStack extends cdk.Stack {
     })
     const landevuTargetGroup = new elbv2.ApplicationTargetGroup(this, "LandevuTargetGroup", {
       vpc: landevuVpc,
-      port: 80,
+      port: 8080,
       protocol: elbv2.ApplicationProtocol.HTTP,
       targetType: elbv2.TargetType.IP,
       targetGroupName: "st-landevu-target-group"
@@ -73,8 +73,8 @@ export class LandevuInfraStack extends cdk.Stack {
     })
 
     landevuContainer.addPortMappings({
-      hostPort: 80,
-      containerPort: 80,
+      hostPort: 8080,
+      containerPort: 8080,
       protocol: ecs.Protocol.TCP
     })
 
@@ -83,6 +83,6 @@ export class LandevuInfraStack extends cdk.Stack {
       vpc: landevuVpc,
       securityGroupName: "st-landevu-app-sg"
     })
-    landevuAppSecurityGroup.addIngressRule(landevuAlbSecurityGroup, ec2.Port.tcp(80))
+    landevuAppSecurityGroup.addIngressRule(landevuAlbSecurityGroup, ec2.Port.tcp(8080))
   }
 }
