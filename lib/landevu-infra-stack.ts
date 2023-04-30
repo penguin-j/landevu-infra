@@ -69,7 +69,12 @@ export class LandevuInfraStack extends cdk.Stack {
     const landevuContainer = landevuTaskDefinition.addContainer("LandevuContainer", {
       image:ecs.ContainerImage.fromEcrRepository(ecr.Repository.fromRepositoryName(this, "fromRepositoryName", ECR_REPOSITORY_NAME), "latest"),
       memoryLimitMiB: 256,
-      cpu: 256
+      cpu: 256,
+      logging: ecs.LogDriver.awsLogs(
+        {
+          streamPrefix: "st-landevu-api"
+        }
+      )
     })
 
     landevuContainer.addPortMappings({
