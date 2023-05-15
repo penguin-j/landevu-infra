@@ -3,6 +3,8 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2"
 import * as ecr from "aws-cdk-lib/aws-ecr"
 import * as ecs from "aws-cdk-lib/aws-ecs"
+import * as ssm from "aws-cdk-lib/aws-ssm"
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager"
 import { Construct } from "constructs";
 
 export class LandevuInfraStack extends cdk.Stack {
@@ -74,7 +76,12 @@ export class LandevuInfraStack extends cdk.Stack {
         {
           streamPrefix: "st-landevu-api"
         }
-      )
+      ),
+      environment: {
+        "SPRING_DATASOURCE_URL": ssm.StringParameter.valueForStringParameter(this, "/st/landevu/db/url"),
+        "SPRING_DATASOURCE_USERNAME": ssm.StringParameter.valueForStringParameter(this, "/st/landevu/db/username"),
+        "SPRING_DATASOURCE_PASSWORD": secretsmanager.Secret.fromSecretNameV2(this, "dbPassword", "/st/landevu/db/password").toString()
+      }
     })
 
     landevuContainer.addPortMappings({
